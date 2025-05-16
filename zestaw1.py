@@ -11,6 +11,8 @@ def stworz_liste_sasiedztwa(graf):
 
 def stworz_macierz_sasiedztwa(graf):
     n = len(graf.nodes)
+    # zapewnia poprawne dzialanie dla grafow o numeracji wierzcholkow
+    # niezaczynajacej sie od 0
     lowest = np.min(graf.nodes)
     macierz = [[0] * n for _ in range(n)]
     for n1, n2 in sorted(graf.edges, key = lambda x: x[0]):
@@ -21,6 +23,8 @@ def stworz_macierz_sasiedztwa(graf):
 def stworz_macierz_incydencji(graf):
     m = len(graf.edges)
     n = len(graf.nodes)
+    # zapewnia poprawne dzialanie dla grafow o numeracji wierzcholkow
+    # niezaczynajacej sie od 0
     lowest = np.min(graf.nodes)
     macierz = [[0] * m for _ in range(n)]
     for i, edge in enumerate(graf.edges):
@@ -93,8 +97,8 @@ def sprawdz_poprawnosc_listy(filename):
     for node, sasiedzi in enumerate(lista_sasiedztwa,start=1):
         for sasiad in sasiedzi:
             if node not in lista_sasiedztwa[sasiad-1]:
-                #return False
-                raise ValueError(f"Błąd: Punkt {node} jest połączony z {sasiad}, ale {sasiad} nie jest połączony z {node}.")
+                return False
+                # raise ValueError(f"Błąd: Punkt {node} jest połączony z {sasiad}, ale {sasiad} nie jest połączony z {node}.")
     return True
 
 def wczytaj_liste_sasiedztwa(filename):
