@@ -179,25 +179,29 @@ def graf_probability(n, p, start=1):
                 graph.add_edge(i, j)
     return graph
 
-def rysuj_graf(graph, title="Graf", show = True, save = False):
+def rysuj_graf(graph, title="Graf", *, pos="circle", node_color="gray", edge_color="gray", edge_labels = None, show = True, save = False):
     """Narysowac graf z węzłami równomiernie rozłożonymi na okręgu."""
     #n = ilosc_wierzcholkow
     #katy = np.linspace(0, 2 * np.pi, n, endpoint=False)
     #pozycje_wierzcholkow = [(np.cos(k), np.sin(k)) for k in katy] # tablica z wartosciami x i y dla poszczegolnych wierzcholkow
     #narysowac wierzcholki i polaczyc je krawedziami z krawedzie
-    n = len(graph.nodes)  # Number of nodes
+    n = len(graph.nodes)
     if n == 0:
-        print("Graph is empty!")
-        return
-    katy_polozenia = np.linspace(0, 2 * np.pi, n, endpoint=False)
-    pos = {wierzcholek: (np.cos(kat), np.sin(kat)) for wierzcholek, kat in zip(graph.nodes, katy_polozenia)}
+        raise ValueError(f"Graf jest pusty")
     plt.figure(figsize=(8, 8))
     ax = plt.gca()
-    nx.draw(graph, pos, with_labels=True, node_color="gray", edge_color="gray",
+    if pos is None:
+        pos = nx.spring_layout(graph)
+    elif pos == "circle":
+        katy_polozenia = np.linspace(0, 2 * np.pi, n, endpoint=False)
+        pos = {wierzcholek: (np.cos(kat), np.sin(kat)) for wierzcholek, kat in zip(graph.nodes, katy_polozenia)}
+        circle = plt.Circle((0, 0), 1, color='red', fill=False, linestyle='--')
+        ax.add_artist(circle)
+    nx.draw(graph, pos, with_labels=True, node_color=node_color, edge_color=edge_color,
             node_size=500, font_size=10, ax=ax)
-    circle = plt.Circle((0, 0), 1, color='red', fill=False, linestyle='--')
-    ax.add_artist(circle)
     ax.set_title(title)
+    if edge_labels is not None:
+        nx.draw_networkx_edge_labels(graph, pos, edge_labels)
     plt.axis("equal")
     if show:
         plt.show()
